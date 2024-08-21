@@ -32,9 +32,7 @@ export function Post() {
         </p>
         <p>
           Link para projeto:{" "}
-          <a href="https://github.com/Alantrizotte06/ProjetoReact">
-            Clique aqui
-          </a>
+          <a href="https://github.com/Alantrizotte06/feedReact">Clique aqui</a>
         </p>
       </div>
 
