@@ -1,39 +1,56 @@
-import styles from "./Post.module.css";
+import { format, formatDistanceToNow } from "date-fns";
+import ptBr from "date-fns/locale/pt-BR";
+
 import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
 
-export function Post() {
+import styles from "./Post.module.css";
+
+export function Post({ author, publishedAt, content }) {
+  const publishedDateFormatted = format(
+    publishedAt,
+    "d 'de' LLLL 'às' HH:mm'h'",
+    {
+      locale: ptBr,
+    }
+  );
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBr,
+    addSuffix: true,
+  });
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar src="https://github.com/Diegotgagliardi.png" />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>Alan Trizotte</strong>
-            <span>Full Stack Developer</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time dateTime="2024-08-07 18:10:30">Publicado há 1h atrás</time>
+        <time
+          title={publishedDateFormatted}
+          dateTime={publishedAt.toISOString()}
+        >
+          {publishedDateRelativeToNow}
+        </time>
       </header>
 
       <div className={styles.content}>
-        <p>What is Lorem Ipsum?</p>
-        <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the s standard dummy text ever since
-          the 1500s, when an unknown printer took a galley of type and scrambled
-          it to make a type specimen book. It has survived not only five
-          centuries, but also the leap into electronic typesetting, remaining
-          essentially unchanged. It was popularised in the 1960s with the
-          release of Letraset sheets containing Lorem Ipsum passages, and more
-          recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </p>
-        <p>
-          Link para projeto:{" "}
-          <a href="https://github.com/Alantrizotte06/feedReact">Clique aqui</a>
-        </p>
+        {content.map((line, index) => {
+          if (line.type == "paragraph") {
+            return <p key={index}>{line.content}</p>;
+          } else if (line.type == "link") {
+            return (
+              <p key={index}>
+                <a href="#">{line.content}</a>
+              </p>
+            );
+          }
+        })}
       </div>
 
       <form className={styles.commentForm}>
