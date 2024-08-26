@@ -8,7 +8,9 @@ import styles from "./Post.module.css";
 import { useState } from "react";
 
 export function Post({ author, publishedAt, content }) {
-  const [comments, setComments] = useState(["post muito bacana hein!"]);
+  const [comments, setComments] = useState(["post muito bacana hein!"]); //Estado
+
+  const [newCommentText, setNewCommentText] = useState(""); //Estado
 
   const publishedDateFormatted = format(
     publishedAt,
@@ -26,11 +28,12 @@ export function Post({ author, publishedAt, content }) {
   function handleCreateNewComment() {
     event.preventDefault();
 
-    const newCommentText = event.target.comment.value;
+    setComments([...comments, newCommentText]); //Utilizado para adicionar um novo comentário
+    setNewCommentText(""); // Utilizando o estado para limpar a textarea
+  }
 
-    setComments([...comments, event.target.comment.value]);
-
-    event.target.comment.value = "";
+  function handleNewCommentChange() {
+    setNewCommentText(event.target.value); // Utilizado para armazenar o valor digitado em textarea
   }
 
   return (
@@ -69,7 +72,12 @@ export function Post({ author, publishedAt, content }) {
       <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
 
-        <textarea name="comment" placeholder="Deixe um comentário" />
+        <textarea
+          name="comment"
+          value={newCommentText} // Declarando que o valor deve ser armazenado dentro deste estado
+          placeholder="Deixe um comentário"
+          onChange={handleNewCommentChange}
+        />
 
         <footer>
           <button type="submit">Comentar</button>
