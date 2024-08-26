@@ -25,6 +25,8 @@ export function Post({ author, publishedAt, content }) {
     addSuffix: true,
   });
 
+  const isNewCommentEmpty = newCommentText.length == 0;
+
   function handleCreateNewComment() {
     event.preventDefault();
 
@@ -33,7 +35,20 @@ export function Post({ author, publishedAt, content }) {
   }
 
   function handleNewCommentChange() {
+    event.target.setCustomValidity("");
     setNewCommentText(event.target.value); // Utilizado para armazenar o valor digitado em textarea
+  }
+
+  function handleNewCommentInvalid() {
+    event.target.setCustomValidity("Este campo é obrigatório!");
+  }
+
+  function deleteComment(commentToDelete) {
+    const commentsWithoutDeleteOne = comments.filter((comment) => {
+      return comment != commentToDelete;
+    });
+
+    setComments(commentsWithoutDeleteOne);
   }
 
   return (
@@ -56,12 +71,12 @@ export function Post({ author, publishedAt, content }) {
       </header>
 
       <div className={styles.content}>
-        {content.map((line, index) => {
+        {content.map((line) => {
           if (line.type == "paragraph") {
-            return <p key={index}>{line.content}</p>;
+            return <p key={line.content}>{line.content}</p>;
           } else if (line.type == "link") {
             return (
-              <p key={index}>
+              <p key={line.content}>
                 <a href="#">{line.content}</a>
               </p>
             );
@@ -77,16 +92,26 @@ export function Post({ author, publishedAt, content }) {
           value={newCommentText} // Declarando que o valor deve ser armazenado dentro deste estado
           placeholder="Deixe um comentário"
           onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
 
         <footer>
-          <button type="submit">Comentar</button>
+          <button type="submit" disabled={isNewCommentEmpty}>
+            Comentar
+          </button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
         {comments.map((comment) => {
-          return <Comment content={comment} />;
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment} // Passamos esta função para o componente Comment
+            />
+          );
         })}
       </div>
     </article>
