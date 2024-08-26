@@ -83,6 +83,7 @@ export function App() {
         <Sidebar />
         <main>
           {posts.map((post) => {
+            // Lista de Post
             return (
               <Post
                 key={post.id}
